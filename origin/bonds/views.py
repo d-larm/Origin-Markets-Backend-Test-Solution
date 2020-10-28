@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core import serializers
 from bonds.serializers import BondSerializer
 from bonds.models import Bond
@@ -14,6 +14,13 @@ import json
 class HelloWorld( APIView ):
     def get( self, request ):
         return Response( "Hello World!" )
+
+class CreateUser( APIView ):
+    def post( self, request ):
+        User = get_user_model()
+        user = User.objects.create_user( **request.data ) # Creates a new user using post data (username, password, email)
+        token = Token.objects.get( user=user )
+        return Response( { 'token': token.key } )
 
 
 class Bonds( APIView ):

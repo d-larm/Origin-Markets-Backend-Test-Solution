@@ -17,12 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token 
 
-from bonds.views import HelloWorld, Bonds
+from bonds.views import HelloWorld, Bonds, CreateUser
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', HelloWorld.as_view()),
-    path('bonds/', Bonds.as_view()),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path( 'admin/', admin.site.urls ),
+    path( '', HelloWorld.as_view() ),
+    path( 'bonds/', Bonds.as_view() ),
+    path( 'create-user/', CreateUser.as_view() ),
+    path( 'api-token-auth/', obtain_auth_token, name='api_token_auth' ),
    
 ]

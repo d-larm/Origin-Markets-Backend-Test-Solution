@@ -30,6 +30,17 @@ class HelloWorld( APITestCase ):
         resp = self.client.get( "/bonds/" )
         assert resp.status_code == 403
     
+    def test_create_user( self ): # Test creation of users
+        userData = {
+            'username': 'test_user',
+            'password': 'test',
+            'email': 'test_user@test.com',
+        }
+        resp = self.client.post( "/create-user/", userData, format="json" )
+        assert resp.status_code == 200
+        assert len( resp.data ) > 0
+        assert resp.data['token'] != None
+    
     def test_legal_name( self ): # Test retrieval of legal name given the lei
         result = Bonds.getLegalName( "R0MUWSFPU8MPRO8K5P83" )
         assert result == "BNPPARIBAS"
