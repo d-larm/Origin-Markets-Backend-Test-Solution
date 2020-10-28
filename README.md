@@ -1,57 +1,150 @@
-# Origin Markets Backend Test
+# Origin Markets Backend Test Solution
 
-### Spec:
 
-We would like you to implement an api to: ingest some data representing bonds, query an external api for some additional data, store the result, and make the resulting data queryable via api.
-- Fork this hello world repo leveraging Django & Django Rest Framework. (If you wish to use something else like flask that's fine too.)
-- Please pick and use a form of authentication, so that each user will only see their own data. ([DRF Auth Options](https://www.django-rest-framework.org/api-guide/authentication/#api-reference))
-- We are missing some data! Each bond will have a `lei` field (Legal Entity Identifier). Please use the [GLEIF API](https://www.gleif.org/en/lei-data/gleif-lei-look-up-api/access-the-api) to find the corresponding `Legal Name` of the entity which issued the bond.
-- If you are using a database, SQLite is sufficient.
-- Please test any additional logic you add.
+## Project Quickstart
 
-#### Project Quickstart
+  
 
 Inside a virtual environment running Python 3:
-- `pip install -r requirement.txt`
-- `./manage.py runserver` to run server.
-- `./manage.py test` to run tests.
 
-#### API
+-  `pip install -r requirement.txt`
 
-We should be able to send a request to:
+-  `./manage.py runserver` to run server.
+
+-  `./manage.py test` to run tests.
+
+  
+
+## Authentication API
+
+When sending a request to an API to add or retrieve bonds you need to be authenticated
+
+### Creating a new user
+Send a request to:
+
+`POST /create-user/`
+
+to create a user with the following user data:
+
+~~~
+
+{
+	"username": "user",
+	"password": "password",
+	"email": "user@example.com"
+}
+
+~~~
+
+The endpoint will return a token:
+
+~~~
+
+{
+	"token": "ec941e7264d334bc314a94fd3370a625802e56f8"
+}
+
+~~~
+This token can then be used to authorize any requests sent to the Bonds API
+
+### Obtaining a Token for Existing Users
+
+Send a request to:
+
+`POST /api-token-auth/`
+
+with the data that looks like:
+~~~
+
+{
+	"username": "user",
+	
+	"password": "password",
+	
+}
+
+~~~
+
+This returns the user's token as shown previously
+
+### Request Headers
+The authentication token must be included in the `Authorization` HTTP header when sending a request to the Bonds API as such
+
+````
+Authorization: Token ec941e7264d334bc314a94fd3370a625802e56f8
+````
+
+## Bonds API
+
+### Creating a bond
+
+Send a request to:
 
 `POST /bonds/`
 
 to create a "bond" with data that looks like:
+
 ~~~
+
 {
-    "isin": "FR0000131104",
-    "size": 100000000,
-    "currency": "EUR",
-    "maturity": "2025-02-28",
-    "lei": "R0MUWSFPU8MPRO8K5P83"
+
+	"isin": "FR0000131104",
+
+	"size": 100000000,
+
+	"currency": "EUR",
+
+	"maturity": "2025-02-28",
+
+	"lei": "R0MUWSFPU8MPRO8K5P83"
+
 }
+
 ~~~
+
 ---
-We should be able to send a request to:
+
+  
+
+### Retrieving a bond
+
+  
+
+Send a request to:
+
+  
 
 `GET /bonds/`
 
+  
+
 to see something like:
+
 ~~~
-[
-    {
-        "isin": "FR0000131104",
-        "size": 100000000,
-        "currency": "EUR",
-        "maturity": "2025-02-28",
-        "lei": "R0MUWSFPU8MPRO8K5P83",
-        "legal_name": "BNPPARIBAS"
-    },
-    ...
+
+[ 
+	{
+
+		"isin": "FR0000131104",
+
+		"size": 100000000,
+
+		"currency": "EUR",
+
+		"maturity": "2025-02-28",
+
+		"lei": "R0MUWSFPU8MPRO8K5P83",
+
+		"legal_name": "BNPPARIBAS"
+
+	},
+	...
 ]
+
 ~~~
-We would also like to be able to add a filter such as:
+
+You can also add a filter such as:
+
 `GET /bonds/?legal_name=BNPPARIBAS`
 
 to reduce down the results.
