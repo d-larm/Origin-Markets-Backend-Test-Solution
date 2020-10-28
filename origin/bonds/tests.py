@@ -29,6 +29,15 @@ class HelloWorld( APITestCase ):
     def test_no_auth( self ): # Test failed authentication
         resp = self.client.get( "/bonds/" )
         assert resp.status_code == 403
+
+    def test_get_token( self ):
+        userData = {
+            'username': 'test',
+            'password': 'test',
+        }
+        resp = self.client.post( "/api-token-auth/", userData, format="json" )
+        assert resp.status_code == 200
+        assert resp.data['token'] != None
     
     def test_create_user( self ): # Test creation of users
         userData = {
